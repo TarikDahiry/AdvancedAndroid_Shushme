@@ -19,6 +19,8 @@ package com.example.android.shushme.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.example.android.shushme.BuildConfig;
+
 public class PlaceContract {
 
     // The authority, which is how your code knows which Content Provider to access
