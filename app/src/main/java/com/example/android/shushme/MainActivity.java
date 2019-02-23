@@ -17,13 +17,23 @@ package com.example.android.shushme;
 */
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 
-    // Constants
+public class MainActivity extends AppCompatActivity implements ConnectionCallbacks,
+        OnConnectionFailedListener {
+
     public static final String TAG = MainActivity.class.getSimpleName();
 
     // Member variables
@@ -41,11 +51,42 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Set up the recycler view
-        mRecyclerView = (RecyclerView) findViewById(R.id.places_list_recycler_view);
+        mRecyclerView = findViewById(R.id.places_list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new PlaceListAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
+        GoogleApiClient client = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .enableAutoManage(this, this)
+                .build();
+
+
+        //GoogleApiClient client = new GoogleApiClient.Builder(this)
+               // .addConnectionCallbacks(this)
+               // .addOnConnectionFailedListener(this)
+               // .addApi(LocationServices.API)
+               // .addApi(Places.GEO_DATA_API)
+                //.enableAutoManage(this, this)
+                //.build();
+
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle connectionHint) {
+        Log.d(TAG, "API Client Connection Successful!");
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.i(TAG, "API Client Connection Suspended!");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "API Client Connection Failed!");
+    }
 }
